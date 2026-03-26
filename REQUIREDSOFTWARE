@@ -1,0 +1,26 @@
+The standard qss script needs such programs to work:
+
+fail2ban
+https://github.com/fail2ban/fail2ban
+
+macchanger 
+sudo apt macchanger
+sudo pacman -S macchanger 
+
+firewalls:
+UFW
+firewalld
+
+one of these vpns:
+mullvad 
+ivpn 
+proton 
+windscribe 
+wireguard 
+openvpn
+vyprvpn
+cyberghost 
+surfshark 
+pia 
+expressvpn
+nordvpn
