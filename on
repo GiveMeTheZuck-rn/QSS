@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "starting QSS | "\e[32mv001 2026\e[0m"
+echo "starting QSS | v001 2026"
 
 
 sleep 3
@@ -99,4 +99,4 @@ case "$vpn" in
     *) echo "no supported vpn detected" ;;
 esac
 
-echo "\e[32mwQSS complete\e[0m"
+echo "QSS complete"
