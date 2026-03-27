@@ -88,4 +88,4 @@ case "$vpn" in
     *) echo "no supported vpn detected" ;;
 esac
 
-echo "terminated qss | v001 2026
+echo "terminated qss | v001 2026"
