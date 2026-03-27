@@ -1,5 +1,14 @@
-QSSy activates 
-QSSn disables 
+(commands when installed)
+on   #activates 
+off  #disables 
 (sudo required)
 
-the security-startup.sh & on & off file should be moved to /usr/local/bin/
+
+
+HOW TO INSTALL 
+
+step 1: the security-startup.sh & on & off file(s) should be moved to /usr/local/bin/
+
+step 2: run: chmod +x /usr/local/bin/on & chmod +x /usr/local/bin/security-startup.sh & chmod +x /usr/local/bin/off
+
+# takes about 2 minutes of your time, but saves alot. 
