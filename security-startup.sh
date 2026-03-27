@@ -98,4 +98,4 @@ case "$vpn" in
     *) echo "no supported vpn detected" ;;
 esac
 
-echo "setup complete"
+echo "\e[32mwQSS complete\e[0m"
