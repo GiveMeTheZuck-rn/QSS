@@ -1,0 +1,101 @@
+#!/bin/bash
+
+echo "starting QSS | \e[32mv001 2026\e[0m
+
+sleep 3
+
+wifi_iface=$(nmcli device status | awk '$2=="wifi" {print $1; exit}')
+
+if [ -z "$wifi_iface" ]; then
+    echo "no wifi detected exiting"
+    exit 1
+fi
+
+echo "wifi detected: $wifi_iface"
+
+
+echo "bringing $wifi_iface down"
+sudo ip link set "$wifi_iface" down
+echo "changing mac"
+sudo macchanger -r "$wifi_iface"
+echo "bringing $wifi_iface up"
+sudo ip link set "$wifi_iface" up
+
+if command -v ufw >/dev/null 2>&1; then
+    firewall="ufw"
+elif command -v firewall-cmd >/dev/null 2>&1; then
+    firewall="firewalld"
+else
+    firewall=""
+fi
+
+echo "firewall detected: $firewall"
+
+
+if [ "$firewall" = "ufw" ]; then
+    echo "configuring ufw"
+    sudo ufw default deny incoming
+    sudo ufw default allow outgoing
+    sudo ufw enable
+    sudo ufw reload
+elif [ "$firewall" = "firewalld" ]; then
+    echo "configuring firewalld"
+    sudo systemctl enable --now firewalld
+    sudo firewall-cmd --set-default-zone=drop
+    sudo firewall-cmd --reload
+else
+    echo "no supported firewall detected"
+fi
+
+
+echo "enabling fail2ban"
+sudo systemctl enable --now fail2ban
+
+
+vpn=""
+if command -v mullvad >/dev/null 2>&1; then
+    vpn="mullvad"
+elif command -v nordvpn >/dev/null 2>&1; then
+    vpn="nordvpn"
+elif command -v protonvpn >/dev/null 2>&1; then
+    vpn="protonvpn"
+elif command -v expressvpn >/dev/null 2>&1; then
+    vpn="expressvpn"
+elif command -v piactl >/dev/null 2>&1; then
+    vpn="pia"
+elif command -v surfshark-vpn >/dev/null 2>&1; then
+    vpn="surfshark"
+elif command -v cyberghostvpn >/dev/null 2>&1; then
+    vpn="cyberghost"
+elif command -v vyprvpn >/dev/null 2>&1; then
+    vpn="vyprvpn"
+elif command -v openvpn >/dev/null 2>&1; then
+    vpn="openvpn"
+elif command -v wg-quick >/dev/null 2>&1; then
+    vpn="wireguard"
+elif command -v windscribe >/dev/null 2>&1; then
+    vpn="windscribe"
+elif command -v ivpn >/dev/null 2>&1; then
+    vpn="ivpn"
+fi
+
+echo "vpn detected: $vpn"
+
+
+case "$vpn" in
+    "mullvad") echo "connecting mullvad"; mullvad connect ;;
+    "nordvpn") echo "connecting nordvpn"; nordvpn connect ;;
+    "protonvpn") echo "connecting protonvpn"; protonvpn c ;;
+    "expressvpn") echo "connecting expressvpn"; expressvpn connect ;;
+    "pia") echo "connecting pia"; piactl connect ;;
+    "surfshark") echo "connecting surfshark"; surfshark-vpn connect ;;
+    "cyberghost") echo "connecting cyberghost"; cyberghostvpn connect ;;
+    "vyprvpn") echo "connecting vyprvpn"; vyprvpn connect ;;
+    "openvpn") echo "use openvpn with config file" ;;
+    "wireguard") echo "use wg-quick up <conf>" ;;
+    "windscribe") echo "connecting windscribe"; windscribe connect ;;
+    "ivpn") echo "connecting ivpn"; ivpn connect ;;
+    *) echo "no supported vpn detected" ;;
+esac
+
+echo "setup complete"
