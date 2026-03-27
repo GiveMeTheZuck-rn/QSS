@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Terminating QSS | \e[32mv001 2026\e[0m"
+echo "Terminating QSS | "\e[32mv001 2026\e[0m"
 
 wifi_iface=$(nmcli device status | awk '$2=="wifi" {print $1; exit}')
 
@@ -88,4 +88,4 @@ case "$vpn" in
     *) echo "no supported vpn detected" ;;
 esac
 
-echo "terminated qss | \e[32mv001 2026\e[0m"
+echo "terminated qss | "\e[32mv001 2026\e[0m"
