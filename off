@@ -1,0 +1,91 @@
+#!/bin/bash
+
+echo "Terminating QSS | \e[32mv001 2026\e[0m"
+
+wifi_iface=$(nmcli device status | awk '$2=="wifi" {print $1; exit}')
+
+if [ -z "$wifi_iface" ]; then
+    echo "no wifi detected exiting"
+    exit 1
+fi
+
+echo "wifi detected: $wifi_iface"
+
+echo "bringing $wifi_iface down"
+sudo ip link set "$wifi_iface" down
+echo "resetting mac"
+sudo macchanger -p "$wifi_iface"
+echo "bringing $wifi_iface up"
+sudo ip link set "$wifi_iface" up
+
+if command -v ufw >/dev/null 2>&1; then
+    firewall="ufw"
+elif command -v firewall-cmd >/dev/null 2>&1; then
+    firewall="firewalld"
+else
+    firewall=""
+fi
+
+echo "firewall detected: $firewall"
+
+if [ "$firewall" = "ufw" ]; then
+    echo "disabling ufw"
+    sudo ufw disable
+elif [ "$firewall" = "firewalld" ]; then
+    echo "disabling firewalld"
+    sudo systemctl stop firewalld
+    sudo systemctl disable firewalld
+else
+    echo "no supported firewall detected"
+fi
+
+echo "disabling fail2ban"
+sudo systemctl stop fail2ban
+sudo systemctl disable fail2ban
+
+vpn=""
+if command -v mullvad >/dev/null 2>&1; then
+    vpn="mullvad"
+elif command -v nordvpn >/dev/null 2>&1; then
+    vpn="nordvpn"
+elif command -v protonvpn >/dev/null 2>&1; then
+    vpn="protonvpn"
+elif command -v expressvpn >/dev/null 2>&1; then
+    vpn="expressvpn"
+elif command -v piactl >/dev/null 2>&1; then
+    vpn="pia"
+elif command -v surfshark-vpn >/dev/null 2>&1; then
+    vpn="surfshark"
+elif command -v cyberghostvpn >/dev/null 2>&1; then
+    vpn="cyberghost"
+elif command -v vyprvpn >/dev/null 2>&1; then
+    vpn="vyprvpn"
+elif command -v openvpn >/dev/null 2>&1; then
+    vpn="openvpn"
+elif command -v wg-quick >/dev/null 2>&1; then
+    vpn="wireguard"
+elif command -v windscribe >/dev/null 2>&1; then
+    vpn="windscribe"
+elif command -v ivpn >/dev/null 2>&1; then
+    vpn="ivpn"
+fi
+
+echo "vpn detected: $vpn"
+
+case "$vpn" in
+    "mullvad") echo "disconnecting mullvad"; mullvad disconnect ;;
+    "nordvpn") echo "disconnecting nordvpn"; nordvpn disconnect ;;
+    "protonvpn") echo "disconnecting protonvpn"; protonvpn d ;;
+    "expressvpn") echo "disconnecting expressvpn"; expressvpn disconnect ;;
+    "pia") echo "disconnecting pia"; piactl disconnect ;;
+    "surfshark") echo "disconnecting surfshark"; surfshark-vpn disconnect ;;
+    "cyberghost") echo "disconnecting cyberghost"; cyberghostvpn disconnect ;;
+    "vyprvpn") echo "disconnecting vyprvpn"; vyprvpn disconnect ;;
+    "openvpn") echo "use openvpn disconnect manually" ;;
+    "wireguard") echo "use wg-quick down <conf>" ;;
+    "windscribe") echo "disconnecting windscribe"; windscribe disconnect ;;
+    "ivpn") echo "disconnecting ivpn"; ivpn disconnect ;;
+    *) echo "no supported vpn detected" ;;
+esac
+
+echo "terminated qss | \e[32mv001 2026\e[0m"
