@@ -1,3 +1,6 @@
 QSSy activates 
 QSSn disables 
 QSSh information
+
+
+the security-startup.sh & on & off file should be moved to /usr/local/bin/
