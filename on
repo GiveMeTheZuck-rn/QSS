@@ -1,6 +1,7 @@
 #!/bin/bash
 
-echo "starting QSS | \e[32mv001 2026\e[0m
+echo "starting QSS | \e[32mv001 2026\e[0m"
+
 
 sleep 3
 
